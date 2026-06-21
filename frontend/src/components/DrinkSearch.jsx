@@ -401,13 +401,13 @@ export default function DrinkSearch() {
                 {mostrarFormulario && (
                     <Box
                         sx={{
-                            mt: 5,
+                            mt: 4,
                             mb: 6,
-                            p: { xs: 2, md: 4 },
-                            background: "rgba(255,255,255,0.08)",
+                            p: { xs: 2.5, md: 4 },
+                            background: "rgba(255,255,255,0.09)",
                             borderRadius: 5,
-                            border: "1px solid rgba(255,255,255,0.15)",
-                            boxShadow: "0 12px 30px rgba(0,0,0,0.25)",
+                            border: "1px solid rgba(255,255,255,0.18)",
+                            boxShadow: "0 18px 40px rgba(0,0,0,0.28)",
                         }}
                     >
 
@@ -419,138 +419,142 @@ export default function DrinkSearch() {
                                 textAlign: "center",
                             }}
                         >
-                            {drinkEditandoId ? "✏️ Editar drink" : "➕ Cadastrar novo drink"}
+                            {drinkEditandoId ? "✏️ Editar drink" : " Cadastrar novo drink"}
                         </Typography>
 
-                        <Grid container spacing={2} alignItems="stretch">
-                            <Grid item xs={12} md={4}>
-                                <TextField
-                                    fullWidth
-                                    label="Nome"
-                                    value={novoDrink.nome}
-                                    onChange={(e) =>
-                                        setNovoDrink({ ...novoDrink, nome: e.target.value })
-                                    }
-                                    sx={{ background: "white", borderRadius: 2 }}
-                                />
-                            </Grid>
+                        <Box
+                            sx={{
+                                display: "grid",
+                                gridTemplateColumns: {
+                                    xs: "1fr",
+                                    md: "1fr 1fr 1fr",
+                                },
+                                gap: 2,
+                                alignItems: "start",
+                            }}
+                        >
+                            <TextField
+                                fullWidth
+                                label="Nome"
+                                value={novoDrink.nome}
+                                onChange={(e) =>
+                                    setNovoDrink({ ...novoDrink, nome: e.target.value })
+                                }
+                                sx={{ background: "white", borderRadius: 2 }}
+                            />
 
-                            <Grid item xs={12} md={4}>
-                                <TextField
-                                    fullWidth
-                                    label="Categoria"
-                                    value={novoDrink.categoria}
-                                    onChange={(e) =>
-                                        setNovoDrink({ ...novoDrink, categoria: e.target.value })
-                                    }
-                                    sx={{ background: "white", borderRadius: 2 }}
-                                />
-                            </Grid>
+                            <TextField
+                                fullWidth
+                                label="Categoria"
+                                value={novoDrink.categoria}
+                                onChange={(e) =>
+                                    setNovoDrink({ ...novoDrink, categoria: e.target.value })
+                                }
+                                sx={{ background: "white", borderRadius: 2 }}
+                            />
 
-                            <Grid item xs={12} md={4}>
-                                <TextField
-                                    select
-                                    fullWidth
-                                    label="Tipo"
-                                    value={novoDrink.tipo}
-                                    onChange={(e) =>
-                                        setNovoDrink({ ...novoDrink, tipo: e.target.value })
-                                    }
-                                    sx={{ background: "white", borderRadius: 2 }}
-                                >
-                                    <MenuItem value="Alcoólico">Alcoólico</MenuItem>
-                                    <MenuItem value="Não alcoólico">Não alcoólico</MenuItem>
-                                </TextField>
-                            </Grid>
+                            <TextField
+                                select
+                                fullWidth
+                                label="Tipo"
+                                value={novoDrink.tipo}
+                                onChange={(e) =>
+                                    setNovoDrink({ ...novoDrink, tipo: e.target.value })
+                                }
+                                sx={{ background: "white", borderRadius: 2 }}
+                            >
+                                <MenuItem value="Alcoólico">Alcoólico</MenuItem>
+                                <MenuItem value="Não alcoólico">Não alcoólico</MenuItem>
+                            </TextField>
 
-                            <Grid item xs={12} md={6}>
-                                <TextField
-                                    fullWidth
-                                    label="Copo"
-                                    value={novoDrink.copo}
-                                    onChange={(e) =>
-                                        setNovoDrink({ ...novoDrink, copo: e.target.value })
-                                    }
-                                    sx={{ background: "white", borderRadius: 2 }}
-                                />
-                            </Grid>
+                            <TextField
+                                fullWidth
+                                label="Copo"
+                                value={novoDrink.copo}
+                                onChange={(e) =>
+                                    setNovoDrink({ ...novoDrink, copo: e.target.value })
+                                }
+                                sx={{ background: "white", borderRadius: 2 }}
+                            />
 
-                            <Grid item xs={12} md={6}>
-                                <TextField
-                                    fullWidth
-                                    label="URL da imagem"
-                                    placeholder="Opcional: se deixar vazio, busca automaticamente"
-                                    value={novoDrink.imagem}
-                                    onChange={(e) =>
-                                        setNovoDrink({ ...novoDrink, imagem: e.target.value })
-                                    }
-                                    sx={{ background: "white", borderRadius: 2 }}
-                                />
-                            </Grid>
+                            <TextField
+                                fullWidth
+                                label="URL da imagem"
+                                placeholder="Opcional: busca automática se vazio"
+                                value={novoDrink.imagem}
+                                onChange={(e) =>
+                                    setNovoDrink({ ...novoDrink, imagem: e.target.value })
+                                }
+                                sx={{ background: "white", borderRadius: 2 }}
+                            />
 
-                            <Grid item xs={12}>
-                                <TextField
-                                    fullWidth
-                                    multiline
-                                    rows={4}
-                                    label="Instruções"
-                                    value={novoDrink.instrucoes}
-                                    onChange={(e) =>
-                                        setNovoDrink({
-                                            ...novoDrink,
-                                            instrucoes: e.target.value,
-                                        })
-                                    }
-                                    sx={{ background: "white", borderRadius: 2 }}
-                                />
-                            </Grid>
+                            <TextField
+                                fullWidth
+                                multiline
+                                rows={4}
+                                label="Instruções"
+                                value={novoDrink.instrucoes}
+                                onChange={(e) =>
+                                    setNovoDrink({
+                                        ...novoDrink,
+                                        instrucoes: e.target.value,
+                                    })
+                                }
+                                sx={{
+                                    background: "white",
+                                    borderRadius: 2,
+                                    gridColumn: {
+                                        xs: "span 1",
+                                        md: "span 2",
+                                    },
+                                }}
+                            />
 
-                            <Grid item xs={12}>
-                                <Box
+                            <Box
+                                sx={{
+                                    display: "flex",
+                                    alignItems: "stretch",
+                                    gap: 2,
+                                    gridColumn: {
+                                        xs: "span 1",
+                                        md: "span 1",
+                                    },
+                                }}
+                            >
+                                <Button
+                                    fullWidth
+                                    variant="contained"
+                                    onClick={drinkEditandoId ? salvarEdicao : cadastrarDrink}
                                     sx={{
-                                        display: "flex",
-                                        justifyContent: "center",
-                                        gap: 2,
-                                        mt: 2,
+                                        height: 56,
+                                        borderRadius: 2,
+                                        background: "#ff9800",
+                                        fontWeight: 700,
+                                        "&:hover": {
+                                            background: "#f57c00",
+                                        },
                                     }}
                                 >
+                                    {drinkEditandoId ? "Salvar alterações" : "Cadastrar Drink"}
+                                </Button>
+
+                                {drinkEditandoId && (
                                     <Button
-                                        variant="contained"
-                                        onClick={drinkEditandoId ? salvarEdicao : cadastrarDrink}
+                                        fullWidth
+                                        variant="outlined"
+                                        color="inherit"
+                                        onClick={cancelarEdicao}
                                         sx={{
-                                            height: 52,
-                                            px: 5,
+                                            height: 56,
                                             borderRadius: 2,
-                                            background: "#ff9800",
                                             fontWeight: 700,
-                                            "&:hover": {
-                                                background: "#f57c00",
-                                            },
                                         }}
                                     >
-                                        {drinkEditandoId
-                                            ? "Salvar alterações"
-                                            : "Cadastrar Drink"}
+                                        Cancelar
                                     </Button>
-
-                                    {drinkEditandoId && (
-                                        <Button
-                                            variant="outlined"
-                                            color="inherit"
-                                            onClick={cancelarEdicao}
-                                            sx={{
-                                                height: 52,
-                                                px: 4,
-                                                borderRadius: 2,
-                                                fontWeight: 700,
-                                            }}
-                                        >
-                                            Cancelar
-                                        </Button>
-                                    )}
-                                </Box>
-                            </Grid>
-                        </Grid>
+                                )}
+                            </Box>
+                        </Box>
                     </Box>
                 )}
 
