@@ -37,6 +37,7 @@ export default function DrinkSearch() {
         imagem: "",
     });// local que guarda o texto digitado no campo de busca
     const [drinkEditandoId, setDrinkEditandoId] = useState(null);
+    const [mostrarFormulario, setMostrarFormulario] = useState(false);
     const { drinks, setDrinks, loading, setLoading, erro, setErro, token } =
         useDrink();
     // useMemo usado para ordenar os drinks por nome
@@ -60,10 +61,10 @@ export default function DrinkSearch() {
         }
     }
     useEffect(() => {
-    if (token) {
-        carregarDrinks();
-    }
-}, [token]);
+        if (token) {
+            carregarDrinks();
+        }
+    }, [token]);
 
     // Validação: impede a busca se o campo estiver vazio
     async function buscarDrinks() {
@@ -133,6 +134,7 @@ export default function DrinkSearch() {
                 instrucoes: "",
                 imagem: "",
             });
+            setMostrarFormulario(false);
 
             const resultado = await listarDrinks(token);
             setDrinks(resultado);
@@ -165,6 +167,7 @@ export default function DrinkSearch() {
     }
     function prepararEdicao(drink) {
         setDrinkEditandoId(drink.id);
+        setMostrarFormulario(true);
 
         setNovoDrink({
             nome: drink.nome,
@@ -199,6 +202,7 @@ export default function DrinkSearch() {
             await atualizarDrink(drinkEditandoId, novoDrink, token);
 
             setDrinkEditandoId(null);
+            setMostrarFormulario(false);
 
             setNovoDrink({
                 nome: "",
@@ -229,8 +233,11 @@ export default function DrinkSearch() {
             imagem: "",
         });
 
+
         setErro("");
+        setMostrarFormulario(false);
     }
+
     function traduzirCategoria(categoria) {
         const traducoes = {
             Cocktail: "Coquetel",
@@ -357,158 +364,195 @@ export default function DrinkSearch() {
                         <CircularProgress />
                     </Box>
                 )}
-                <Box
-                    sx={{
-                        mt: 5,
-                        mb: 6,
-                        p: { xs: 2, md: 4 },
-                        background: "rgba(255,255,255,0.08)",
-                        borderRadius: 5,
-                        border: "1px solid rgba(255,255,255,0.15)",
-                        boxShadow: "0 12px 30px rgba(0,0,0,0.25)",
-                    }}
-                >
-                    <Typography
-                        variant="h5"
+                <Box sx={{ display: "flex", justifyContent: "center", mb: 3 }}>
+                    <Button
+                        variant="contained"
+                        onClick={() => {
+                            if (mostrarFormulario) {
+                                cancelarEdicao();
+                            } else {
+                                setMostrarFormulario(true);
+                                setDrinkEditandoId(null);
+
+                                setNovoDrink({
+                                    nome: "",
+                                    categoria: "",
+                                    tipo: "",
+                                    copo: "",
+                                    instrucoes: "",
+                                    imagem: "",
+                                });
+                            }
+                        }}
                         sx={{
-                            mb: 3,
+                            height: 52,
+                            px: 5,
+                            borderRadius: 2,
+                            background: "#ff9800",
                             fontWeight: 700,
-                            textAlign: "center",
+                            "&:hover": {
+                                background: "#f57c00",
+                            },
                         }}
                     >
-                        ➕ Cadastrar novo drink
-                    </Typography>
+                        + Novo Drink
+                    </Button>
+                </Box>
+                {mostrarFormulario && (
+                    <Box
+                        sx={{
+                            mt: 5,
+                            mb: 6,
+                            p: { xs: 2, md: 4 },
+                            background: "rgba(255,255,255,0.08)",
+                            borderRadius: 5,
+                            border: "1px solid rgba(255,255,255,0.15)",
+                            boxShadow: "0 12px 30px rgba(0,0,0,0.25)",
+                        }}
+                    >
 
-                    <Grid container spacing={2} alignItems="stretch">
-                        <Grid item xs={12} md={4}>
-                            <TextField
-                                fullWidth
-                                label="Nome"
-                                value={novoDrink.nome}
-                                onChange={(e) =>
-                                    setNovoDrink({ ...novoDrink, nome: e.target.value })
-                                }
-                                sx={{ background: "white", borderRadius: 2 }}
-                            />
-                        </Grid>
+                        <Typography
+                            variant="h5"
+                            sx={{
+                                mb: 3,
+                                fontWeight: 700,
+                                textAlign: "center",
+                            }}
+                        >
+                            {drinkEditandoId ? "✏️ Editar drink" : "➕ Cadastrar novo drink"}
+                        </Typography>
 
-                        <Grid item xs={12} md={4}>
-                            <TextField
-                                fullWidth
-                                label="Categoria"
-                                value={novoDrink.categoria}
-                                onChange={(e) =>
-                                    setNovoDrink({ ...novoDrink, categoria: e.target.value })
-                                }
-                                sx={{ background: "white", borderRadius: 2 }}
-                            />
-                        </Grid>
+                        <Grid container spacing={2} alignItems="stretch">
+                            <Grid item xs={12} md={4}>
+                                <TextField
+                                    fullWidth
+                                    label="Nome"
+                                    value={novoDrink.nome}
+                                    onChange={(e) =>
+                                        setNovoDrink({ ...novoDrink, nome: e.target.value })
+                                    }
+                                    sx={{ background: "white", borderRadius: 2 }}
+                                />
+                            </Grid>
 
-                        <Grid item xs={12} md={4}>
-                            <TextField
-                                select
-                                fullWidth
-                                label="Tipo"
-                                value={novoDrink.tipo}
-                                onChange={(e) =>
-                                    setNovoDrink({ ...novoDrink, tipo: e.target.value })
-                                }
-                                sx={{ background: "white", borderRadius: 2 }}
-                            >
-                                <MenuItem value="Alcoólico">Alcoólico</MenuItem>
-                                <MenuItem value="Não alcoólico">Não alcoólico</MenuItem>
-                            </TextField>
-                        </Grid>
+                            <Grid item xs={12} md={4}>
+                                <TextField
+                                    fullWidth
+                                    label="Categoria"
+                                    value={novoDrink.categoria}
+                                    onChange={(e) =>
+                                        setNovoDrink({ ...novoDrink, categoria: e.target.value })
+                                    }
+                                    sx={{ background: "white", borderRadius: 2 }}
+                                />
+                            </Grid>
 
-                        <Grid item xs={12} md={6}>
-                            <TextField
-                                fullWidth
-                                label="Copo"
-                                value={novoDrink.copo}
-                                onChange={(e) =>
-                                    setNovoDrink({ ...novoDrink, copo: e.target.value })
-                                }
-                                sx={{ background: "white", borderRadius: 2 }}
-                            />
-                        </Grid>
+                            <Grid item xs={12} md={4}>
+                                <TextField
+                                    select
+                                    fullWidth
+                                    label="Tipo"
+                                    value={novoDrink.tipo}
+                                    onChange={(e) =>
+                                        setNovoDrink({ ...novoDrink, tipo: e.target.value })
+                                    }
+                                    sx={{ background: "white", borderRadius: 2 }}
+                                >
+                                    <MenuItem value="Alcoólico">Alcoólico</MenuItem>
+                                    <MenuItem value="Não alcoólico">Não alcoólico</MenuItem>
+                                </TextField>
+                            </Grid>
 
-                        <Grid item xs={12} md={6}>
-                            <TextField
-                                fullWidth
-                                label="URL da imagem"
-                                placeholder="Opcional: se deixar vazio, busca automaticamente"
-                                value={novoDrink.imagem}
-                                onChange={(e) =>
-                                    setNovoDrink({ ...novoDrink, imagem: e.target.value })
-                                }
-                                sx={{ background: "white", borderRadius: 2 }}
-                            />
-                        </Grid>
+                            <Grid item xs={12} md={6}>
+                                <TextField
+                                    fullWidth
+                                    label="Copo"
+                                    value={novoDrink.copo}
+                                    onChange={(e) =>
+                                        setNovoDrink({ ...novoDrink, copo: e.target.value })
+                                    }
+                                    sx={{ background: "white", borderRadius: 2 }}
+                                />
+                            </Grid>
 
-                        <Grid item xs={12}>
-                            <TextField
-                                fullWidth
-                                multiline
-                                rows={4}
-                                label="Instruções"
-                                value={novoDrink.instrucoes}
-                                onChange={(e) =>
-                                    setNovoDrink({
-                                        ...novoDrink,
-                                        instrucoes: e.target.value,
-                                    })
-                                }
-                                sx={{ background: "white", borderRadius: 2 }}
-                            />
-                        </Grid>
+                            <Grid item xs={12} md={6}>
+                                <TextField
+                                    fullWidth
+                                    label="URL da imagem"
+                                    placeholder="Opcional: se deixar vazio, busca automaticamente"
+                                    value={novoDrink.imagem}
+                                    onChange={(e) =>
+                                        setNovoDrink({ ...novoDrink, imagem: e.target.value })
+                                    }
+                                    sx={{ background: "white", borderRadius: 2 }}
+                                />
+                            </Grid>
 
-                        <Grid item xs={12}>
-                            <Box
-                                sx={{
-                                    display: "flex",
-                                    justifyContent: "center",
-                                    gap: 2,
-                                    mt: 2,
-                                }}
-                            >
-                                <Button
-                                    variant="contained"
-                                    onClick={drinkEditandoId ? salvarEdicao : cadastrarDrink}
+                            <Grid item xs={12}>
+                                <TextField
+                                    fullWidth
+                                    multiline
+                                    rows={4}
+                                    label="Instruções"
+                                    value={novoDrink.instrucoes}
+                                    onChange={(e) =>
+                                        setNovoDrink({
+                                            ...novoDrink,
+                                            instrucoes: e.target.value,
+                                        })
+                                    }
+                                    sx={{ background: "white", borderRadius: 2 }}
+                                />
+                            </Grid>
+
+                            <Grid item xs={12}>
+                                <Box
                                     sx={{
-                                        height: 52,
-                                        px: 5,
-                                        borderRadius: 2,
-                                        background: "#ff9800",
-                                        fontWeight: 700,
-                                        "&:hover": {
-                                            background: "#f57c00",
-                                        },
+                                        display: "flex",
+                                        justifyContent: "center",
+                                        gap: 2,
+                                        mt: 2,
                                     }}
                                 >
-                                    {drinkEditandoId
-                                        ? "Salvar alterações"
-                                        : "Cadastrar Drink"}
-                                </Button>
-
-                                {drinkEditandoId && (
                                     <Button
-                                        variant="outlined"
-                                        color="inherit"
-                                        onClick={cancelarEdicao}
+                                        variant="contained"
+                                        onClick={drinkEditandoId ? salvarEdicao : cadastrarDrink}
                                         sx={{
                                             height: 52,
-                                            px: 4,
+                                            px: 5,
                                             borderRadius: 2,
+                                            background: "#ff9800",
                                             fontWeight: 700,
+                                            "&:hover": {
+                                                background: "#f57c00",
+                                            },
                                         }}
                                     >
-                                        Cancelar
+                                        {drinkEditandoId
+                                            ? "Salvar alterações"
+                                            : "Cadastrar Drink"}
                                     </Button>
-                                )}
-                            </Box>
+
+                                    {drinkEditandoId && (
+                                        <Button
+                                            variant="outlined"
+                                            color="inherit"
+                                            onClick={cancelarEdicao}
+                                            sx={{
+                                                height: 52,
+                                                px: 4,
+                                                borderRadius: 2,
+                                                fontWeight: 700,
+                                            }}
+                                        >
+                                            Cancelar
+                                        </Button>
+                                    )}
+                                </Box>
+                            </Grid>
                         </Grid>
-                    </Grid>
-                </Box>
+                    </Box>
+                )}
 
                 <Grid container spacing={3} justifyContent="center">
                     {drinksOrdenados.map((drink) => (
