@@ -419,7 +419,7 @@ export default function DrinkSearch() {
                                 textAlign: "center",
                             }}
                         >
-                            {drinkEditandoId ? "✏️ Editar drink" : " Cadastrar novo drink"}
+                            {drinkEditandoId ? " Editar drink" : " Cadastrar novo drink"}
                         </Typography>
 
                         <Box
@@ -429,23 +429,30 @@ export default function DrinkSearch() {
                                     xs: "1fr",
                                     md: "1fr 1fr 1fr",
                                 },
-                                gap: 2,
+                                gap: 2.5,
                                 alignItems: "start",
                             }}
                         >
                             <TextField
                                 fullWidth
-                                label="Nome"
+                                placeholder="Nome do drink"
                                 value={novoDrink.nome}
                                 onChange={(e) =>
                                     setNovoDrink({ ...novoDrink, nome: e.target.value })
                                 }
-                                sx={{ background: "white", borderRadius: 2 }}
+                                sx={{
+                                    background: "white",
+                                    borderRadius: 2,
+                                    "& input::placeholder": {
+                                        color: "#777",
+                                        opacity: 1,
+                                    },
+                                }}
                             />
 
                             <TextField
                                 fullWidth
-                                label="Categoria"
+                                placeholder="Categoria"
                                 value={novoDrink.categoria}
                                 onChange={(e) =>
                                     setNovoDrink({ ...novoDrink, categoria: e.target.value })
@@ -456,20 +463,29 @@ export default function DrinkSearch() {
                             <TextField
                                 select
                                 fullWidth
-                                label="Tipo"
                                 value={novoDrink.tipo}
                                 onChange={(e) =>
                                     setNovoDrink({ ...novoDrink, tipo: e.target.value })
                                 }
-                                sx={{ background: "white", borderRadius: 2 }}
+                                SelectProps={{
+                                    displayEmpty: true,
+                                }}
+                                sx={{
+                                    background: "white",
+                                    borderRadius: 2,
+                                    textAlign: "left",
+                                }}
                             >
+                                <MenuItem value="" disabled>
+                                    Selecione o tipo
+                                </MenuItem>
                                 <MenuItem value="Alcoólico">Alcoólico</MenuItem>
                                 <MenuItem value="Não alcoólico">Não alcoólico</MenuItem>
                             </TextField>
 
                             <TextField
                                 fullWidth
-                                label="Copo"
+                                placeholder="Copo"
                                 value={novoDrink.copo}
                                 onChange={(e) =>
                                     setNovoDrink({ ...novoDrink, copo: e.target.value })
@@ -479,20 +495,30 @@ export default function DrinkSearch() {
 
                             <TextField
                                 fullWidth
-                                label="URL da imagem"
-                                placeholder="Opcional: busca automática se vazio"
+                                placeholder="URL da imagem (opcional)"
                                 value={novoDrink.imagem}
                                 onChange={(e) =>
                                     setNovoDrink({ ...novoDrink, imagem: e.target.value })
                                 }
-                                sx={{ background: "white", borderRadius: 2 }}
+                                sx={{
+                                    background: "white",
+                                    borderRadius: 2,
+                                    gridColumn: {
+                                        xs: "span 1",
+                                        md: "span 2",
+                                    },
+                                    "& input::placeholder": {
+                                        color: "#777",
+                                        opacity: 1,
+                                    },
+                                }}
                             />
 
                             <TextField
                                 fullWidth
                                 multiline
-                                rows={4}
-                                label="Instruções"
+                                rows={5}
+                                placeholder="Digite as instruções do drink..."
                                 value={novoDrink.instrucoes}
                                 onChange={(e) =>
                                     setNovoDrink({
@@ -507,18 +533,19 @@ export default function DrinkSearch() {
                                         xs: "span 1",
                                         md: "span 2",
                                     },
+                                    "& textarea::placeholder": {
+                                        color: "#777",
+                                        opacity: 1,
+                                    },
                                 }}
                             />
 
                             <Box
                                 sx={{
                                     display: "flex",
-                                    alignItems: "stretch",
+                                    flexDirection: "column",
                                     gap: 2,
-                                    gridColumn: {
-                                        xs: "span 1",
-                                        md: "span 1",
-                                    },
+                                    justifyContent: "flex-start",
                                 }}
                             >
                                 <Button
@@ -541,8 +568,8 @@ export default function DrinkSearch() {
                                 {drinkEditandoId && (
                                     <Button
                                         fullWidth
-                                        variant="outlined"
-                                        color="inherit"
+                                        variant="contained"
+                                        color="error"
                                         onClick={cancelarEdicao}
                                         sx={{
                                             height: 56,
