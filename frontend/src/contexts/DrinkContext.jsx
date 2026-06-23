@@ -1,4 +1,5 @@
 import { createContext, useContext, useState } from "react";
+import { logoutUsuario } from "./backendApi";
 
 const DrinkContext = createContext();
 
@@ -21,7 +22,15 @@ export function DrinkProvider({ children }) {
     localStorage.setItem("token", dados.token);
   }
 
-  function logout() {
+  async function logout() {
+    if (token) {
+      try {
+        await logoutUsuario(token);
+      } catch {
+        console.log("Erro ao comunicar logout com o auth-service.");
+      }
+    }
+
     setUsuario(null);
     setToken("");
     setDrinks([]);

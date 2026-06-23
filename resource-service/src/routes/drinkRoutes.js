@@ -18,19 +18,35 @@ function limparTexto(texto) {
 // Todas as rotas abaixo exigem JWT
 router.use(autenticarToken);
 
-// GET /drinks?nome=margarita
+// GET /drinks
 router.get("/", (req, res) => {
     const { nome } = req.query;
 
     const callback = (err, rows) => {
         if (err) {
-            return res.status(500).json({ mensagem: "Erro ao buscar drinks." });
+            console.log("[resource-service] Erro ao buscar drinks:", err.message);
+
+            return res.status(500).json({
+                mensagem: "Erro ao buscar drinks.",
+            });
         }
+
+        console.log(
+            "[resource-service] Busca realizada pelo usuário:",
+            req.usuario.id
+        );
 
         return res.json(rows);
     };
 
     if (nome) {
+        console.log(
+            "[resource-service] Busca por nome:",
+            limparTexto(nome),
+            "Usuário:",
+            req.usuario.id
+        );
+
         return DrinkModel.buscarPorNome(limparTexto(nome), callback);
     }
 
@@ -51,6 +67,11 @@ router.post(
         const erros = validationResult(req);
 
         if (!erros.isEmpty()) {
+            console.log(
+                "[resource-service] Erro de validação ao criar drink:",
+                erros.array()
+            );
+
             return res.status(400).json({
                 mensagem: "Erro de validação.",
                 erros: erros.array(),
@@ -69,8 +90,19 @@ router.post(
 
         DrinkModel.criarDrink(drink, (err, novoDrink) => {
             if (err) {
-                return res.status(500).json({ mensagem: "Erro ao criar drink." });
+                console.log("[resource-service] Erro ao criar drink:", err.message);
+
+                return res.status(500).json({
+                    mensagem: "Erro ao criar drink.",
+                });
             }
+
+            console.log(
+                "[resource-service] Drink criado:",
+                novoDrink.nome,
+                "Usuário:",
+                req.usuario.id
+            );
 
             publicarEvento("drink.criado", novoDrink);
 
@@ -97,6 +129,11 @@ router.put(
         const erros = validationResult(req);
 
         if (!erros.isEmpty()) {
+            console.log(
+                "[resource-service] Erro de validação ao atualizar drink:",
+                erros.array()
+            );
+
             return res.status(400).json({
                 mensagem: "Erro de validação.",
                 erros: erros.array(),
@@ -105,14 +142,29 @@ router.put(
 
         DrinkModel.buscarPorId(id, (err, drinkEncontrado) => {
             if (err) {
-                return res.status(500).json({ mensagem: "Erro ao buscar drink." });
+                console.log("[resource-service] Erro ao buscar drink:", err.message);
+
+                return res.status(500).json({
+                    mensagem: "Erro ao buscar drink.",
+                });
             }
 
             if (!drinkEncontrado) {
-                return res.status(404).json({ mensagem: "Drink não encontrado." });
+                console.log("[resource-service] Drink não encontrado:", id);
+
+                return res.status(404).json({
+                    mensagem: "Drink não encontrado.",
+                });
             }
 
             if (drinkEncontrado.usuario_id !== req.usuario.id) {
+                console.log(
+                    "[resource-service] Acesso negado ao editar drink:",
+                    id,
+                    "Usuário:",
+                    req.usuario.id
+                );
+
                 return res.status(403).json({
                     mensagem: "Você não tem permissão para editar este drink.",
                 });
@@ -129,8 +181,24 @@ router.put(
 
             DrinkModel.atualizarDrink(id, drinkAtualizado, (err, drink) => {
                 if (err) {
-                    return res.status(500).json({ mensagem: "Erro ao atualizar drink." });
+                    console.log(
+                        "[resource-service] Erro ao atualizar drink:",
+                        err.message
+                    );
+
+                    return res.status(500).json({
+                        mensagem: "Erro ao atualizar drink.",
+                    });
                 }
+
+                console.log(
+                    "[resource-service] Drink atualizado:",
+                    drink.nome,
+                    "ID:",
+                    id,
+                    "Usuário:",
+                    req.usuario.id
+                );
 
                 publicarEvento("drink.atualizado", drink);
 
@@ -149,14 +217,29 @@ router.delete("/:id", (req, res) => {
 
     DrinkModel.buscarPorId(id, (err, drinkEncontrado) => {
         if (err) {
-            return res.status(500).json({ mensagem: "Erro ao buscar drink." });
+            console.log("[resource-service] Erro ao buscar drink:", err.message);
+
+            return res.status(500).json({
+                mensagem: "Erro ao buscar drink.",
+            });
         }
 
         if (!drinkEncontrado) {
-            return res.status(404).json({ mensagem: "Drink não encontrado." });
+            console.log("[resource-service] Drink não encontrado:", id);
+
+            return res.status(404).json({
+                mensagem: "Drink não encontrado.",
+            });
         }
 
         if (drinkEncontrado.usuario_id !== req.usuario.id) {
+            console.log(
+                "[resource-service] Acesso negado ao excluir drink:",
+                id,
+                "Usuário:",
+                req.usuario.id
+            );
+
             return res.status(403).json({
                 mensagem: "Você não tem permissão para excluir este drink.",
             });
@@ -164,8 +247,21 @@ router.delete("/:id", (req, res) => {
 
         DrinkModel.excluirDrink(id, (err) => {
             if (err) {
-                return res.status(500).json({ mensagem: "Erro ao excluir drink." });
+                console.log("[resource-service] Erro ao excluir drink:", err.message);
+
+                return res.status(500).json({
+                    mensagem: "Erro ao excluir drink.",
+                });
             }
+
+            console.log(
+                "[resource-service] Drink excluído:",
+                drinkEncontrado.nome,
+                "ID:",
+                id,
+                "Usuário:",
+                req.usuario.id
+            );
 
             publicarEvento("drink.excluido", {
                 id,

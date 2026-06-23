@@ -70,3 +70,16 @@ export async function buscarImagemCocktail(nome) {
 
   return drinkEncontrado?.strDrinkThumb || "";
 }
+export async function logoutUsuario(token) {
+  const resposta = await axios.post(
+    "http://localhost:3001/auth/logout",
+    {},
+    {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    }
+  );
+
+  return resposta.data;
+}
