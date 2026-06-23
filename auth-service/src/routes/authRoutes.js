@@ -2,10 +2,19 @@ const express = require("express");
 const jwt = require("jsonwebtoken");
 const bcrypt = require("bcryptjs");
 const UserModel = require("../models/UserModel");
+const rateLimit = require("express-rate-limit");
 
 const router = express.Router();
 
-router.post("/login", (req, res) => {
+const loginLimiter = rateLimit({
+  windowMs: 15 * 60 * 1000,
+  max: 5,
+  message: {
+    mensagem: "Muitas tentativas de login. Tente novamente mais tarde.",
+  },
+});
+
+router.post("/login", loginLimiter, (req, res) => {
   const { email, senha } = req.body;
 
   if (!email || !senha) {

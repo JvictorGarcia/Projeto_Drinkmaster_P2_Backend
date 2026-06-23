@@ -30,8 +30,11 @@ export default function Login() {
             const dados = await loginUsuario(email, senha);
 
             salvarLogin(dados);
-        } catch {
-            setErroLogin("Email ou senha inválidos.");
+        } catch (error) {
+            const mensagem =
+                error.response?.data?.mensagem || "Email ou senha inválidos.";
+
+            setErroLogin(mensagem);
         }
     }
 
