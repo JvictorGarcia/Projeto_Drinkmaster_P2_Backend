@@ -3,6 +3,7 @@ const jwt = require("jsonwebtoken");
 const bcrypt = require("bcryptjs");
 const UserModel = require("../models/UserModel");
 const rateLimit = require("express-rate-limit");
+const blacklist = require("../config/tokenBlacklist");
 
 const router = express.Router();
 
@@ -14,6 +15,28 @@ const loginLimiter = rateLimit({
   },
 });
 
+// Logout: adiciona o token na blacklist
+router.post("/logout", (req, res) => {
+  const authHeader = req.headers.authorization;
+
+  if (!authHeader) {
+    return res.status(400).json({
+      mensagem: "Token não informado.",
+    });
+  }
+
+  const token = authHeader.split(" ")[1];
+
+  blacklist.add(token);
+
+  console.log("[auth-service] Logout realizado.");
+
+  return res.json({
+    mensagem: "Logout realizado com sucesso.",
+  });
+});
+
+// Login com limite de tentativas
 router.post("/login", loginLimiter, (req, res) => {
   const { email, senha } = req.body;
 
@@ -26,6 +49,8 @@ router.post("/login", loginLimiter, (req, res) => {
   const user = UserModel.findByEmail(email);
 
   if (!user) {
+    console.log("[auth-service] Tentativa de login inválida:", email);
+
     return res.status(401).json({
       mensagem: "Usuário ou senha inválidos.",
     });
@@ -34,6 +59,8 @@ router.post("/login", loginLimiter, (req, res) => {
   const senhaValida = bcrypt.compareSync(senha, user.senha);
 
   if (!senhaValida) {
+    console.log("[auth-service] Tentativa de login inválida:", email);
+
     return res.status(401).json({
       mensagem: "Usuário ou senha inválidos.",
     });
@@ -50,6 +77,8 @@ router.post("/login", loginLimiter, (req, res) => {
       expiresIn: "1h",
     }
   );
+
+  console.log("[auth-service] Login realizado:", user.email);
 
   return res.json({
     mensagem: "Login realizado com sucesso.",
