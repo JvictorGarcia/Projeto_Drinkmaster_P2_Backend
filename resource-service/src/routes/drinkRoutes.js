@@ -1,6 +1,11 @@
 const express = require("express");
 const { body, validationResult } = require("express-validator");
 const sanitizeHtml = require("sanitize-html");
+const {
+    buscarCache,
+    salvarCache,
+    limparCacheDrinks,
+} = require("../config/redisCache");
 
 const DrinkModel = require("../models/DrinkModel");
 const autenticarToken = require("../config/authMiddleware");
@@ -19,16 +24,38 @@ function limparTexto(texto) {
 router.use(autenticarToken);
 
 // GET /drinks
-router.get("/", (req, res) => {
+router.get("/", async (req, res) => {
     const { nome } = req.query;
 
-    const callback = (err, rows) => {
+    const chaveCache = nome
+        ? `drinks:busca:${limparTexto(nome)}`
+        : "drinks:todos";
+
+    try {
+        const dadosCache = await buscarCache(chaveCache);
+
+        if (dadosCache) {
+            console.log("[resource-service] Dados retornados do cache:", chaveCache);
+            return res.json(dadosCache);
+        }
+    } catch {
+        console.log("[resource-service] Cache indisponível, buscando no banco.");
+    }
+
+    const callback = async (err, rows) => {
         if (err) {
             console.log("[resource-service] Erro ao buscar drinks:", err.message);
 
             return res.status(500).json({
                 mensagem: "Erro ao buscar drinks.",
             });
+        }
+
+        try {
+            await salvarCache(chaveCache, rows, 60);
+            console.log("[resource-service] Dados salvos no cache:", chaveCache);
+        } catch {
+            console.log("[resource-service] Não foi possível salvar no cache.");
         }
 
         console.log(
@@ -51,7 +78,7 @@ router.get("/", (req, res) => {
     }
 
     return DrinkModel.listarTodos(callback);
-});
+});;
 
 // POST /drinks
 router.post(
@@ -105,6 +132,7 @@ router.post(
             );
 
             publicarEvento("drink.criado", novoDrink);
+            limparCacheDrinks();
 
             return res.status(201).json({
                 mensagem: "Drink criado com sucesso.",
@@ -201,6 +229,7 @@ router.put(
                 );
 
                 publicarEvento("drink.atualizado", drink);
+                limparCacheDrinks();
 
                 return res.json({
                     mensagem: "Drink atualizado com sucesso.",
@@ -266,6 +295,7 @@ router.delete("/:id", (req, res) => {
             publicarEvento("drink.excluido", {
                 id,
             });
+            limparCacheDrinks();
 
             return res.json({
                 mensagem: "Drink excluído com sucesso.",
