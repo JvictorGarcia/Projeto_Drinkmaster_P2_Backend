@@ -45,6 +45,15 @@ export default function DrinkSearch() {
     const drinksOrdenados = useMemo(() => {
         return [...drinks].sort((a, b) => a.nome.localeCompare(b.nome));
     }, [drinks]);
+    const totalDrinks = drinks.length;
+
+    const totalAlcoolicos = drinks.filter(
+        (drink) => drink.tipo === "Alcoólico"
+    ).length;
+
+    const totalNaoAlcoolicos = drinks.filter(
+        (drink) => drink.tipo === "Não alcoólico"
+    ).length;
 
     async function carregarDrinks() {
         try {
@@ -364,6 +373,59 @@ export default function DrinkSearch() {
                         <CircularProgress />
                     </Box>
                 )}
+                <Box
+                    sx={{
+                        display: "grid",
+                        gridTemplateColumns: {
+                            xs: "1fr",
+                            md: "repeat(3, 1fr)",
+                        },
+                        gap: 2,
+                        mb: 4,
+                    }}
+                >
+                    <Box
+                        sx={{
+                            p: 3,
+                            borderRadius: 4,
+                            background: "rgba(255,255,255,0.08)",
+                            border: "1px solid rgba(255,255,255,0.15)",
+                        }}
+                    >
+                        <Typography variant="h6">🍹 Total de Drinks</Typography>
+                        <Typography variant="h4" sx={{ fontWeight: 700 }}>
+                            {totalDrinks}
+                        </Typography>
+                    </Box>
+
+                    <Box
+                        sx={{
+                            p: 3,
+                            borderRadius: 4,
+                            background: "rgba(255,255,255,0.08)",
+                            border: "1px solid rgba(255,255,255,0.15)",
+                        }}
+                    >
+                        <Typography variant="h6">🥃 Alcoólicos</Typography>
+                        <Typography variant="h4" sx={{ fontWeight: 700 }}>
+                            {totalAlcoolicos}
+                        </Typography>
+                    </Box>
+
+                    <Box
+                        sx={{
+                            p: 3,
+                            borderRadius: 4,
+                            background: "rgba(255,255,255,0.08)",
+                            border: "1px solid rgba(255,255,255,0.15)",
+                        }}
+                    >
+                        <Typography variant="h6">🥤 Não alcoólicos</Typography>
+                        <Typography variant="h4" sx={{ fontWeight: 700 }}>
+                            {totalNaoAlcoolicos}
+                        </Typography>
+                    </Box>
+                </Box>
                 <Box sx={{ display: "flex", justifyContent: "center", mb: 3 }}>
                     <Button
                         variant="contained"
@@ -737,4 +799,5 @@ export default function DrinkSearch() {
             </Box>
         </Container>
     );
+
 }

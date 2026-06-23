@@ -25,7 +25,10 @@ function App() {
 
             {usuario && (
               <Box sx={{ display: "flex", alignItems: "center", gap: 2 }}>
-                <Typography variant="body2">{usuario.nome}</Typography>
+                <Typography variant="body2">
+                  👤 {usuario.nome}
+                </Typography>
+
                 <Button color="warning" variant="outlined" onClick={logout}>
                   Sair
                 </Button>
